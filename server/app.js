@@ -1,13 +1,12 @@
 const express = require("express");
 const admin = require("firebase-admin");
-const serviceAccount = require("./firebase-private-key.json");
 require("dotenv").config();
 
 admin.initializeApp({
   credential: admin.credential.cert({
     type: "service_account",
     project_id: "hosting-node-d1622",
-    private_key_id: "a8ecbe7e39361e075456ebeab976330bebb5833d",
+    private_key_id: process.env.FIREBASE_PRIVATE_ID,
     private_key: process.env.FIREBASE_PRIVATE_KEY,
     client_email:
       "firebase-adminsdk-iyytf@hosting-node-d1622.iam.gserviceaccount.com",
@@ -49,8 +48,6 @@ app.post("/send", (req, res) => {
   }
 }
    */
-  console.log("🚀 ~ app.post ~ message:", message);
-
   admin
     .messaging()
     .send(message)
@@ -59,6 +56,9 @@ app.post("/send", (req, res) => {
       res.status(200).send("Notification sent successfully");
     })
     .catch((error) => {
+      /**
+       * if errorInfo.code === messaging/registration-token-not-registered then remove the token from db
+       */
       console.log("Error sending message:", error);
       res.status(500).send("Failed to send notification");
     });
