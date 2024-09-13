@@ -18,6 +18,6 @@ export default function Home() {
         unsubscribe();
       };
     }
-  }, [fcmToken]);
+  }, []);
   return <div>Home</div>;
 }
